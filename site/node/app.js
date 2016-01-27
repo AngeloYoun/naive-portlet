@@ -1,7 +1,7 @@
 var NaiveBayesController = require('./naiveBayesController.js');
 var fs = require('fs');
-var app = require('http').createServer(handler)
-var io = require('socket.io')(app);
+var app = require('express')();
+var http = require('http').Server(app);
 
 var trainingData = fs.readFileSync('../trainingData.json');
 
@@ -13,43 +13,51 @@ var config = {
 
 // NaiveBayesController.readData(trainingDataJson, config)
 
-app.listen(80);
 
-function handler (req, res) {
-	fs.readFile(
-		'../html/index.html',
-		function (err, data) {
-			if (err) {
-				res.writeHead(500);
+app.get('/', function(req, res){
+	res.sendFile(__dirname + '/../html/index.html');
+});
 
-				return res.end('Error loading index.html');
-			}
+http.listen(3000, function(){
+	console.log('listening on *:3000');
+});
+// app.listen(80);
 
-			res.writeHead(200);
+// function handler (req, res) {
+// 	fs.readFile(
+// 		'../html/index.html',
+// 		function (err, data) {
+// 			if (err) {
+// 				res.writeHead(500);
 
-			res.end(data);
-		}
-	);
-}
+// 				return res.end('Error loading index.html');
+// 			}
 
-io.on(
-	'connection',
-	function (socket) {
-		socket.emit(
-			'news',
-			{
-				hello: 'world'
-			}
-		);
+// 			res.writeHead(200);
 
-		socket.on(
-			'my other event',
-			function (data) {
-				NaiveBayesController.readData(trainingDataJson, config);
-			}
-		);
-	}
-);
+// 			res.end(data);
+// 		}
+// 	);
+// }
+
+// io.on(
+// 	'connection',
+// 	function (socket) {
+// 		socket.emit(
+// 			'news',
+// 			{
+// 				hello: 'world'
+// 			}
+// 		);
+
+// 		socket.on(
+// 			'my other event',
+// 			function (data) {
+// 				NaiveBayesController.readData(trainingDataJson, config);
+// 			}
+// 		);
+// 	}
+// );
 
 // function bayesController() {
 // }

@@ -6,6 +6,28 @@ function naiveBayesController() {
 
 var NaiveBayesController = new naiveBayesController();
 
+NaiveBayesController.categorize = function (data) {
+	var instance = this;
+
+	var categoryMap = new Object();
+
+	for (var i = 0; i < data.length; i++) {
+		var feature = data[i];
+
+		var chosenCateogory = classifier.categorize(attributeList.join(''));
+
+		var category = categoryMaps[chosenCateogory];
+
+		category.push(feature);
+	}
+
+	instance._categoryMap = categoryMap;
+
+	instance.learn();
+
+	return categoryMap;
+}
+
 NaiveBayesController.readData = function(data, config) {
 	var instance = this;
 
@@ -89,8 +111,42 @@ NaiveBayesController.learn = function() {
 	}
 };
 
+NaiveBayesController.tokenProbabilities = function() {
+	var tokenProbabilitiesMap = new Object();
+
+	var categoryMap = instance._categoryMap;
+
+	var categoryKeys = Object.keys(categoryMap);
+
+	for (var i = 0; i < categoryKeys.length; i++) {
+		var attributeTokenProbabilitiesMap = new Object();
+
+		var attributes = Object.keys(feature);
+
+		for (var j = 0; j < attributes.length; j++) {
+			var currentAttribute = attributes[j]
+
+			var value = feature[currentAttribute];
+
+			var tokenProbability = classifier.tokenProbability(value, categoryKeys[i]);
+
+			attributeTokenProbabilitiesMap[currentAttribute] = tokenProbability;
+		}
+
+		tokenProbabilitiesMap[categoryKeys[i]] = attributeTokenProbabilitiesMap;
+	}
+
+	return tokenProbabilitiesMap;
+};
+
 module.exports = {
+	categorize: function(data) {
+		NaiveBayesController.categorize(data, config);
+	}
 	readData: function(data, config) {
 		NaiveBayesController.readData(data, config);
+	}
+	tokenProbabilities: function() {
+		NaiveBayesController.tokenProbabilities();
 	}
 };

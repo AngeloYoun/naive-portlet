@@ -6,7 +6,7 @@ var trainingData = fs.readFileSync('../trainingData.json');
 var trainingDataJson = JSON.parse(trainingData);
 
 var config = {
-	testCategory: 'IsWon',
+	testCategory: 'IsWon'
 }
 
 NaiveBayesController.readData(trainingDataJson, config)

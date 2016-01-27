@@ -1,22 +1,39 @@
 var NaiveBayesController = require('./naiveBayesController.js');
 var fs = require('fs');
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
+var io = require('socket.io').listen(http)
 
-var trainingData = fs.readFileSync('../trainingData.json');
+var trainingData = fs.readFileSync('./data/trainingData.json');
 
 var trainingDataJson = JSON.parse(trainingData);
 
-var config = {
-	testCategory: 'IsWon'
-}
-
 // NaiveBayesController.readData(trainingDataJson, config)
 
+app.use(express.static(__dirname));
 
 app.get('/', function(req, res){
-	res.sendFile(__dirname + '/../html/index.html');
+	res.sendFile(__dirname + '/index.html');
 });
+
+io.on(
+	'connection',
+	function(socket) {
+		socket.on(
+			'learnData',
+			function(data) {
+				var content = data.content;
+				var config = data.config;
+
+				// console.log(content)
+
+				NaiveBayesController.readData(content, config)
+			}
+		);
+	}
+);
+
 
 http.listen(3000, function(){
 	console.log('listening on *:3000');

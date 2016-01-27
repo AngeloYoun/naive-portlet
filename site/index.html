@@ -1,0 +1,30 @@
+<html>
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+		<script src="http://localhost:3000/dependencies/socket.io.js"></script>
+		<script src="/js/main.js" type="text/javascript"></script>
+		<link href="../css/main.css" media="screen" rel="stylesheet" type="text/css" />
+		<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300,200,700' rel='stylesheet' type='text/css'>
+	</head>
+	<body>
+		<div class="content">
+			<div class="btn input-container">
+			<span class="btn-label">Data File</span>
+				<div id="uploadInputButton"><span class="label">Choose</span></div>
+				<input type="file" id="uploadInput" />
+			</div>
+
+			<div class="btn input-container hidden">
+			<span class="btn-label">Category</span>
+				<select class="input-select" id="categoryInput" >
+				</select>
+				<span class="label">Choose</span>
+				<div class="category-dropdown collapsed" id="categoryDropdown"></div>
+			</div>
+
+			<button class="btn btn-primary hidden" id="educateButton">
+				<span>Educate</span>
+			</button>
+		</div>
+	</body>
+</html>

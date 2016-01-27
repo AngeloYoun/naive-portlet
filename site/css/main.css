@@ -7,12 +7,24 @@ select {
 	-webkit-appearance: menulist-button;
 }
 
+.header-container {
+	margin: auto;
+	width: 900px;
+}
+
+.header {
+	font-weight: 100;
+	letter-spacing: 0.4em;
+	text-transform: lowercase;
+	text-align: left;
+}
+
 .hidden, .collapsed {
 	display: none !important;
 }
 
 .btn-label {
-	text-align: center;
+	text-align: left;
 	width: 260px;
 	display: block;
 	margin: 0 auto 12px;
@@ -32,7 +44,24 @@ select {
 }
 
 .content {
-	margin-top: 300px;
+	margin: 150px auto;
+	width: 900px;
+}
+
+.sub-content {
+	display: inline-block;
+	width: 49%;
+	vertical-align: top;
+}
+
+#outputContainer {
+	text-align: left;
+	margin-top: -20px;
+}
+
+.sub-header {
+	font-weight: 100;
+	letter-spacing: 0.2em;
 }
 
 .dropdown-option {
@@ -46,7 +75,7 @@ select {
 	color: #98B1BE;
 	display: block;
 	font-family: 'Source Sans Pro', sans-serif;
-	margin: 0 auto 70px;
+	margin: 0 0 26px;
 	letter-spacing: 0.2em;
 	font-size: 16px;
 	font-weight: 100;
@@ -63,7 +92,7 @@ select {
 	cursor: pointer;
 }
 
-.input-container {
+.input-container, .test-input-container {
 	position: relative;
 	width: 260px;
 	cursor: pointer;
@@ -95,7 +124,7 @@ select {
 	color: #555;
 }
 
-#uploadInput, #categoryInput {
+#testInput, #uploadInput, #categoryInput {
 	cursor: pointer;
 	display: block;
 	height: 60px;
@@ -104,11 +133,24 @@ select {
 	width: 260px;
 }
 
+#fileInfo {
+	font-size: 10px;
+	position: absolute;
+	width: 100%;
+	left: 0;
+	bottom: -19px;
+	text-align: left;
+}
+
+#educateButton, #testButton {
+	margin-top: 100px;
+}
+
 #categoryInput {
 	z-index: -1;
 }
 
-#uploadInput {
+#uploadInput, #testInput {
 	z-index: 10;
 }
 
@@ -119,4 +161,46 @@ select {
 	width: 100%;
 	position: absolute;
 	top: 0;
+}
+
+#fileName, #entryCount {
+	display: block;
+}
+
+#fileName {
+	text-align: left;
+	margin-bottom: 14px;
+	font-weight: 300;
+	letter-spacing: 0.11em;
+	font-size: 22px;
+	vertical-align: top;
+}
+
+#entryCount {
+	font-weight: 300;
+	letter-spacing: 0.20em;
+	font-size: 12px;
+	text-transform: uppercase;
+	margin-bottom: 45px;
+}
+
+#categoryName {
+	font-size: 14px;
+	font-weight: 300;
+	letter-spacing: 0.06em;
+}
+
+#categoryResults {
+	max-height: 400px;
+	overflow-y: auto;
+}
+
+#categoryResults > span {
+	display: inline-block;
+	padding: 10px 0;
+	font-size: 12px;
+	font-weight: 300;
+	max-width: 100px;
+	min-width: 100px;
+	padding-right: 30px
 }

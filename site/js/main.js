@@ -6,10 +6,36 @@ $(document).ready(
 
 		var TEMPLATE_DROPDOWN_OPTION = '<div class="dropdown-option"><span value="{1}">{2}</span></div>';
 
+		var TEMPLATE_CATEGORY_VALUE_RESULT = '<span>{1}: {2}</span>';
+
 		function skyNetInterface(socket) {
 			var instance = this;
 
 			instance.socket = socket;
+
+			instance._testOverallPercentage = $('#testOverallPercentage');
+
+			instance._testIndividualResults = $('#testIndividualResults');
+
+			instance._testTotalNumbers = $('#testTotalNumbers');
+
+			instance._testButton = $('#testButton');
+
+			instance._categoryResultsLabel = $('#categoryResults');
+
+			instance._learnedEntryCount = $('#learnedEntryCount')
+
+			instance._categoryName = $('#categoryName');
+
+			instance._entryCountLabel = $('#entryCount');
+
+			instance._fileNameLabel = $('#fileName');
+
+			instance._fileInfo = $('#fileInfo');
+
+			instance._testFileInfo = $('#testFileInfo');
+
+			instance._testInput = $('#testInput');
 
 			instance._categoryInput = $('#categoryInput');
 
@@ -21,7 +47,11 @@ $(document).ready(
 
 			instance._testCategory;
 
+			instance._validCategoryValues;
+
 			instance._data;
+
+			instance._testData;
 		}
 
 		var SkyNetInterface = new skyNetInterface(socket);
@@ -43,7 +73,56 @@ $(document).ready(
 
 			instance._educateButton.on('click', instance.handleEducateButtonClick)
 
+			instance._testInput.on('change', instance.handleTestFileUpload);
+
+			instance._testButton.on('click', instance.handleTestButtonClick);
+
+			var socket = instance.socket;
+
+			socket.on('dataLearned', instance.handleDataLearned);
+
+			socket.on('dataTested', instance.handleDataTested);
+
 			$(instance).on('dataUpdated', instance.handleDataUpdate);
+		}
+
+		SkyNetInterface.handleDataLearned = function(data) {
+			var categoryResults = data.categoryResults;
+
+			categoryResultsContainer = SkyNetInterface._categoryResultsLabel;
+
+			for(var value in categoryResults) {
+				var categoryValueResult = TEMPLATE_CATEGORY_VALUE_RESULT.replace('{1}', value);
+
+				categoryValueResult = categoryValueResult.replace('{2}', categoryResults[value]);
+
+				var categoryValueResultNode = $(categoryValueResult);
+
+				categoryResultsContainer.append(categoryValueResultNode);
+			}
+
+			SkyNetInterface._learnedEntryCount.text(data.total + ' out of ' + SkyNetInterface._data.length + ' learned.')
+
+			SkyNetInterface._testInput.closest('div').removeClass('hidden');
+		}
+
+		SkyNetInterface.handleDataTested = function(data) {
+			var positiveCount = data.positiveResults.length;
+			var negativeCount = data.negativeResults.length;
+
+			console.log(data)
+
+			var ratio = positiveCount / (positiveCount + negativeCount)
+
+			var percentage = (Math.round(ratio * 100)/100) * 10;
+
+			// console.log('fired')
+
+			SkyNetInterface._testOverallPercentage.text(percentage + '% of predictions were correct.')
+
+			SkyNetInterface._testTotalNumbers.text(positiveCount + ' correct, ' + negativeCount + ' incorrect.');
+
+			// testIndividualResults = SkyNetInterface._testIndividualResults
 		}
 
 		SkyNetInterface.handleCategoryDropdrownClick = function(event) {
@@ -59,11 +138,11 @@ $(document).ready(
 
 			var optionNode = $(event.target);
 
-			var value = optionNode.attr('value');
+			var value = optionNode.text().toLowerCase();
 
 			var categoryDropdown = SkyNetInterface._categoryDropdown;
 
-			categoryDropdown.siblings('.label').text(optionNode.text());
+			SkyNetInterface._categoryName.text('In relation to ' + optionNode.text().toLowerCase() + '.');
 
 			SkyNetInterface._categoryInput.attr('value', value);
 
@@ -92,6 +171,9 @@ $(document).ready(
 
 			sampleObject = data[0];
 
+			categoryDropdown.empty();
+			categoryInput.empty();
+
 			for (var categories in sampleObject) {
 				var template = TEMPLATE_SELECT_OPTION.replace('{1}', categories);
 
@@ -114,18 +196,16 @@ $(document).ready(
 		}
 
 		SkyNetInterface.handleFileUpload = function(event) {
-			var instance = this;
+			var file = event.target.files[0];
 
-			var uploadBtnNode = event.target;
-
-			var file = uploadBtnNode.files[0];
-
-			$(uploadBtnNode).siblings('div').children('.label').text(file.name);
+			SkyNetInterface._fileNameLabel.text(file.name)
 
 			var fileReader = new FileReader();
 
 			fileReader.onload = function(event) {
 				var data = JSON.parse(event.target.result);
+
+				SkyNetInterface._entryCountLabel.text('Data file has ' + data.length + ' entries.')
 
 				$(SkyNetInterface).trigger('dataUpdated', [data]);
 			}
@@ -136,6 +216,8 @@ $(document).ready(
 		SkyNetInterface.handleEducateButtonClick = function(event) {
 			var socket = SkyNetInterface.socket;
 
+			console.log(SkyNetInterface._testCategory, SkyNetInterface._data)
+
 			socket.emit(
 				'learnData',
 				{
@@ -145,6 +227,40 @@ $(document).ready(
 					}
 				}
 			);
+		}
+
+		SkyNetInterface.handleTestButtonClick = function() {
+			var socket = SkyNetInterface.socket;
+			console.log(SkyNetInterface._testData)
+
+			socket.emit(
+				'testData',
+				{
+					content: SkyNetInterface._testData,
+				}
+			);
+		}
+
+		SkyNetInterface.handleTestFileUpload = function(event) {
+			var file = event.target.files[0];
+
+			// SkyNetInterface._fileNameLabel.text(file.name)
+
+			var fileReader = new FileReader();
+
+			fileReader.onload = function(event) {
+				var data = JSON.parse(event.target.result);
+
+				SkyNetInterface._testData = data;
+
+				SkyNetInterface._testButton.removeClass('hidden');
+
+				// SkyNetInterface._entryCountLabel.text('Data file has ' + data.length + ' entries.')
+
+				// $(SkyNetInterface).trigger('dataUpdated', [data]);
+			}
+
+			fileReader.readAsText(file)
 		}
 
 		SkyNetInterface.initialize();

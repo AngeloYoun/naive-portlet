@@ -1,4 +1,4 @@
-var NaiveBayesController = require('./naiveBayesController.js');
+var SkyNetController = require('./skyNetController.js');
 var fs = require('fs');
 var express = require('express');
 var app = express();
@@ -26,9 +26,22 @@ io.on(
 				var content = data.content;
 				var config = data.config;
 
+				var data = SkyNetController.readData(content, config);
+
+				socket.emit('dataLearned', data);
+			}
+		);
+
+		socket.on(
+			'testData',
+			function(data) {
+				var content = data.content;
+
 				// console.log(content)
 
-				NaiveBayesController.readData(content, config)
+				var data = SkyNetController.testSample(content);
+
+				socket.emit('dataTested', data)
 			}
 		);
 	}

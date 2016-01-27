@@ -7,24 +7,50 @@
 		<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300,200,700' rel='stylesheet' type='text/css'>
 	</head>
 	<body>
+		<div class="header-container">
+			<h1 class="header">Skynet</h1>
+		</div>
 		<div class="content">
-			<div class="btn input-container">
-			<span class="btn-label">Data File</span>
-				<div id="uploadInputButton"><span class="label">Choose</span></div>
-				<input type="file" id="uploadInput" />
+			<div class="sub-content" id="inputContainer">
+				<div class="btn input-container">
+					<div id="uploadInputButton"><span class="label">Data File</span></div>
+					<input type="file" id="uploadInput" />
+					<span id="fileInfo"></span>
+				</div>
+
+				<div class="btn input-container hidden">
+					<select class="input-select" id="categoryInput" >
+					</select>
+					<span class="label">Choose Category</span>
+					<div class="category-dropdown collapsed" id="categoryDropdown"></div>
+				</div>
+
+				<button class="btn btn-primary hidden" id="educateButton">
+					<span>Educate</span>
+				</button>
+
+				<div class="btn test-input-container hidden">
+					<div id="uploadInputButton"><span class="label">Test File</span></div>
+					<input type="file" id="testInput" />
+					<span id="testFileInfo"></span>
+				</div>
+
+				<button class="btn btn-primary hidden" id="testButton">
+					<span>Test</span>
+				</button>
 			</div>
 
-			<div class="btn input-container hidden">
-			<span class="btn-label">Category</span>
-				<select class="input-select" id="categoryInput" >
-				</select>
-				<span class="label">Choose</span>
-				<div class="category-dropdown collapsed" id="categoryDropdown"></div>
-			</div>
+			<div class="sub-content" id="outputContainer">
+				<span id="fileName"></span>
+				<span id="entryCount"></span>
+				<span id="categoryName"></span>
+				<!-- <span id="learnedEntryCount"></span> -->
+				<div id="categoryResults"></div>
 
-			<button class="btn btn-primary hidden" id="educateButton">
-				<span>Educate</span>
-			</button>
+				<span id="testOverallPercentage"></span>
+				<span id="testTotalNumbers"></span>
+				<div id="testIndividualResults"></div>
+			</div>
 		</div>
 	</body>
 </html>

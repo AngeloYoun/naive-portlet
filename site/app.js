@@ -44,6 +44,21 @@ io.on(
 				socket.emit('dataTested', data)
 			}
 		);
+
+		socket.on(
+			'estimateString',
+			function(data) {
+				var content = data.content;
+
+				// console.log(content)
+
+				var data = {};
+
+				data.results = SkyNetController.tokenProbabilities(content);
+
+				socket.emit('stringTested', data)
+			}
+		);
 	}
 );
 

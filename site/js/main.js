@@ -13,6 +13,10 @@ $(document).ready(
 
 			instance.socket = socket;
 
+			instance._inputSubmitButton = $('#inputSubmitButton');
+
+			instance._stringTestInput = $('#stringTestInput');
+
 			instance._testOverallPercentage = $('#testOverallPercentage');
 
 			instance._testIndividualResults = $('#testIndividualResults');
@@ -65,6 +69,8 @@ $(document).ready(
 		SkyNetInterface.bindUI = function() {
 			var instance = this;
 
+			instance._inputSubmitButton.on('click', instance.handleTestString);
+
 			instance._uploadInput.on('change', instance.handleFileUpload);
 
 			instance._categoryInput.closest('div').on('click', instance.handleCategoryDropdrownClick);
@@ -82,6 +88,8 @@ $(document).ready(
 			socket.on('dataLearned', instance.handleDataLearned);
 
 			socket.on('dataTested', instance.handleDataTested);
+
+			socket.on('stringTested', instance.handleStringTested);
 
 			$(instance).on('dataUpdated', instance.handleDataUpdate);
 		}
@@ -114,7 +122,7 @@ $(document).ready(
 
 			var ratio = positiveCount / (positiveCount + negativeCount)
 
-			var percentage = (Math.round(ratio * 100)/100) * 10;
+			var percentage = (Math.round(ratio * 100)/100) * 100;
 
 			// console.log('fired')
 
@@ -123,6 +131,15 @@ $(document).ready(
 			SkyNetInterface._testTotalNumbers.text(positiveCount + ' correct, ' + negativeCount + ' incorrect.');
 
 			// testIndividualResults = SkyNetInterface._testIndividualResults
+		}
+
+		SkyNetInterface.handleStringTested = function(data) {
+			var results = data.results;
+
+			console.log(results)
+
+			// results[0];
+			// results[1]
 		}
 
 		SkyNetInterface.handleCategoryDropdrownClick = function(event) {
@@ -241,6 +258,25 @@ $(document).ready(
 			);
 		}
 
+		SkyNetInterface.handleTestString = function(event) {
+			var socket = SkyNetInterface.socket;
+
+			var stringTestInput = SkyNetInterface._stringTestInput;
+
+			console.log(stringTestInput);
+
+			var testString = stringTestInput.val();
+
+			console.log(testString)
+
+			socket.emit(
+				'estimateString',
+				{
+					content: testString,
+				}
+			);
+		}
+
 		SkyNetInterface.handleTestFileUpload = function(event) {
 			var file = event.target.files[0];
 
@@ -250,6 +286,8 @@ $(document).ready(
 
 			fileReader.onload = function(event) {
 				var data = JSON.parse(event.target.result);
+
+				data = data.slice(0, 5000);
 
 				SkyNetInterface._testData = data;
 

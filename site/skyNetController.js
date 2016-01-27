@@ -43,6 +43,7 @@ SkyNetController.testSample = function(data) {
 			// console.log('negative')
 			negativeResults.push(feature);
 		}
+		console.log(i)
 	}
 
 	var data = {
@@ -196,32 +197,47 @@ SkyNetController.learn = function() {
 	}
 };
 
-SkyNetController.tokenProbabilities = function() {
+SkyNetController.tokenProbabilities = function(content) {
+	var instance = this;
+
+	var maxProbability = -Infinity;
+
 	var tokenProbabilitiesMap = new Object();
 
-	var categoryMap = instance._categoryMap;
+	var classifier = instance._classifier;
 
-	var categoryKeys = Object.keys(categoryMap);
+	var categories = classifier.categories;
 
-	for (var i = 0; i < categoryKeys.length; i++) {
-		var attributeTokenProbabilitiesMap = new Object();
+	console.log(content);
 
-		var attributes = Object.keys(feature);
+	// var results = [];
 
-		for (var j = 0; j < attributes.length; j++) {
-			var currentAttribute = attributes[j]
+	// for (var category in categories) {
+	// 	var tokenProbability = classifier.tokenProbability(content, category)
 
-			var value = feature[currentAttribute];
+	// 	if (tokenProbability > maxProbability) {
+	// 		maxProbability = tokenProbability;
 
-			var tokenProbability = classifier.tokenProbability(value, categoryKeys[i]);
+	// 		results.unshift(
+	// 			{
+	// 				category: category,
+	// 				probability: tokenProbability
+	// 			}
+	// 		);
+	// 	}
+	// 	else {
+	// 		results.push(
+	// 			{
+	// 				category: category,
+	// 				probability: tokenProbability
+	// 			}
+	// 		);
+	// 	}
+	// }
 
-			attributeTokenProbabilitiesMap[currentAttribute] = tokenProbability;
-		}
+	// return results
 
-		tokenProbabilitiesMap[categoryKeys[i]] = attributeTokenProbabilitiesMap;
-	}
-
-	return tokenProbabilitiesMap;
+	return classifier.probabilityList(content);
 };
 
 module.exports = {
@@ -234,7 +250,7 @@ module.exports = {
 	testSample: function(data) {
 		return SkyNetController.testSample(data);
 	},
-	tokenProbabilities: function() {
-		SkyNetController.tokenProbabilities();
+	tokenProbabilities: function(content) {
+		return SkyNetController.tokenProbabilities(content);
 	}
 };

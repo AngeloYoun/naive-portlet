@@ -14,17 +14,16 @@ NaiveBayesController.readData = function(data, config) {
 	var categoryMap = instance.categoryMap || {};
 
 	var testCategory = config.testCategory;
-	var positiveCategory = config.positiveCategory;
 
 	for (var i = 0; i < data.length; i++) {
-		var company = data[i]
+		var feature = data[i]
 
-		var attributes = Object.keys(company);
+		var attributes = Object.keys(feature);
 
 		for (var j = 0; j < attributes.length; j++) {
 			var currentAttribute = attributes[j]
 
-			var value = company[currentAttribute];
+			var value = feature[currentAttribute];
 
 			if (currentAttribute === testCategory) {
 				if (!categoryMap[value]) {
@@ -33,7 +32,7 @@ NaiveBayesController.readData = function(data, config) {
 
 				var category = categoryMap[value];
 
-				category.push(company)
+				category.push(feature)
 			}
 		}
 	}
@@ -63,9 +62,9 @@ NaiveBayesController.learn = function() {
 		var category = categoryMap[currentKey];
 
 		for (var j = 0; j < category.length; j++) {
-			var company = category[j];
+			var feature = category[j];
 
-			var attributes = Object.keys(company);
+			var attributes = Object.keys(feature);
 
 			var attributeList = [];
 
@@ -75,7 +74,7 @@ NaiveBayesController.learn = function() {
 				var currentAttribute = attributes[k];
 
 				if (currentAttribute != testCategory) {
-					attributeList.push(company[currentAttribute])
+					attributeList.push(feature[currentAttribute])
 				}
 			}
 
@@ -89,9 +88,6 @@ NaiveBayesController.learn = function() {
 		documentsRead += totalDocuments;
 	}
 };
-
-// NaiveBayesController.addData = function() {
-// }
 
 module.exports = {
 	readData: function(data, config) {

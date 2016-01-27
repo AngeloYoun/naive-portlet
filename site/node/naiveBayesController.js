@@ -12,7 +12,19 @@ NaiveBayesController.categorize = function (data) {
 	var categoryMap = new Object();
 
 	for (var i = 0; i < data.length; i++) {
+		var attributeList = [];
+
 		var feature = data[i];
+
+		var attributes = Object.keys(feature);
+
+		for (var j = 0; j < attributes.length; j++) {
+			var currentAttribute = attributes[j];
+
+			if (currentAttribute != instance._testCategory) {
+				attributeList.push(feature[currentAttribute])
+			}
+		}
 
 		var chosenCateogory = classifier.categorize(attributeList.join(''));
 

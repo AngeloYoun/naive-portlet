@@ -7,9 +7,11 @@ function naiveBayesController() {
 var NaiveBayesController = new naiveBayesController();
 
 NaiveBayesController.readData = function(data, config) {
-	this.data = data;
+	var instance = this;
 
-	var categoryMap = this.categoryMap || {};
+	instance.data = data;
+
+	var categoryMap = instance.categoryMap || {};
 
 	var testCategory = config.testCategory;
 	var positiveCategory = config.positiveCategory;
@@ -36,9 +38,11 @@ NaiveBayesController.readData = function(data, config) {
 		}
 	}
 
-	this._categoryMap = categoryMap;
+	instance._categoryMap = categoryMap;
 
-	this.learn();
+	instance._testCategory = testCategory;
+
+	instance.learn();
 };
 
 NaiveBayesController.learn = function() {
@@ -50,18 +54,39 @@ NaiveBayesController.learn = function() {
 
 	var categoryKeys = Object.keys(categoryMap);
 
+	//this is just for keeping track of documents read for display purposes
+	var documentsRead = 0;
+
 	for (var i = 0; i < categoryKeys.length; i++) {
 		var currentKey =  categoryKeys[i];
 
-		var company = categoryMap[currentKey];
+		var category = categoryMap[currentKey];
 
-		var attributes = Object.keys(company);
+		for (var j = 0; j < category.length; j++) {
+			var company = category[j];
 
-		for (var i = 0; i < attributes.length; i++) {
+			var attributes = Object.keys(company);
 
+			var attributeList = [];
+
+			var testCategory = instance._testCategory;
+
+			for (var k = 0; k < attributes.length; k++) {
+				var currentAttribute = attributes[k];
+
+				if (currentAttribute != testCategory) {
+					attributeList.push(company[currentAttribute])
+				}
+			}
+
+			classifier.learn(attributeList.join(''), currentKey);
 		}
 
-		classifier.learn(company)
+		var totalDocuments = classifier.totalDocuments;
+
+		console.log('Learned ' + (totalDocuments - documentsRead) + ' for category ' + currentKey);
+
+		documentsRead += totalDocuments;
 	}
 };
 
